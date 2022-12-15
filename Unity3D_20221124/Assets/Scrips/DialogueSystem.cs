@@ -15,6 +15,8 @@ namespace Blythe
         private float dialogueIntervalTime = 0.1f;
         [SerializeField,Header("開頭對話")]
         private DialogueData dialogueOpening;
+        [SerializeField, Header("對話按鍵")]
+        private KeyCode dialogueKey = KeyCode.Space;
 
         private WaitForSeconds dialogueInterval => new WaitForSeconds(dialogueIntervalTime);
         private CanvasGroup groupDialogue;
@@ -43,11 +45,18 @@ namespace Blythe
         /// 淡入淡出群組物件
         /// </summary>
         /// <returns></returns>
-        private IEnumerator FadeGroup()
+        private IEnumerator FadeGroup(bool fadeIn = true)
         {
+            //三源運算子?:
+            //語法:
+            //布林值 ? 布林值為true : 布林值為false;
+            //true ? 1 : 10; 結果為1
+            //false ? 1 : 10; 結果為10
+            float increase = fadeIn ? +0.1f : -0.1F;
+
             for (int i = 0; i < 10; i++)
             {
-                groupDialogue.alpha += 0.1f;
+                groupDialogue.alpha += increase;
                 yield return new WaitForSeconds(0.04f);
 
             }
@@ -56,16 +65,32 @@ namespace Blythe
         private IEnumerator TypeEffect()
         {
             textName.text = dialogueOpening.dialogueName;
-            textContent.text = "";
-
-            string dialogue= dialogueOpening.dialogueContents[0];
-
-            for (int i = 0; i < dialogue.Length; i++)
-            {
-                textContent.text += dialogue[i];
-                yield return dialogueInterval;
-            }
+          
             
+            for (int j = 0; j < dialogueOpening.dialogueContents.Length; j++)
+            {
+                textContent.text = "";
+
+                string dialogue = dialogueOpening.dialogueContents[j];
+
+                for (int i = 0; i < dialogue.Length; i++)
+                {
+                    textContent.text += dialogue[i];
+                    yield return dialogueInterval;
+                }
+
+                goTriangle.SetActive(true);
+                
+                while (!Input.GetKeyDown(dialogueKey))
+                {
+                    yield return null;
+                }
+
+                print("玩家按下按鍵");
+
+            }
+
+            StartCoroutine(FadeGroup(false));
         }
     }
 
