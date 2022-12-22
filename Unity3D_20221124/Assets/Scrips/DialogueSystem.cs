@@ -1,6 +1,8 @@
 using UnityEngine;
 using TMPro;
 using System.Collections;
+using UnityEngine.InputSystem;
+using UnityEngine.Events;
 
 namespace Blythe
 {
@@ -24,6 +26,9 @@ namespace Blythe
         private TextMeshProUGUI textContent;
         private GameObject goTriangle;
 
+        private PlayerInput playerInput;
+        private UnityEvent onDialogueFinish;
+
         #endregion
 
         #region 事件
@@ -35,12 +40,25 @@ namespace Blythe
             goTriangle = GameObject.Find("對話完成圖示");
             goTriangle.SetActive(false);
 
-            StartCoroutine(FadeGroup());
-            StartCoroutine(TypeEffect());
+            playerInput = GameObject.Find("PlayerCapsule").GetComponent<PlayerInput>();
+
+            StartDialogue(dialogueOpening);
         }
 
         #endregion
 
+        /// <summary>
+        /// 開始對話
+        /// </summary>
+        /// <param name="data">要執行的對話資料</param>
+        /// <param name="_onDialogueFinish">對話結束後的事件，可以空值</param>
+        public void StartDialogue(DialogueData data,UnityEvent _onDialogueFinish=null)
+        {
+            playerInput.enabled = false;
+            StartCoroutine(FadeGroup());
+            StartCoroutine(TypeEffect(data));
+            onDialogueFinish = _onDialogueFinish;
+        }
         /// <summary>
         /// 淡入淡出群組物件
         /// </summary>
@@ -62,16 +80,16 @@ namespace Blythe
             }
         }
 
-        private IEnumerator TypeEffect()
+        private IEnumerator TypeEffect(DialogueData data)
         {
-            textName.text = dialogueOpening.dialogueName;
+            textName.text = data.dialogueName;
           
             
-            for (int j = 0; j < dialogueOpening.dialogueContents.Length; j++)
+            for (int j = 0; j < data.dialogueContents.Length; j++)
             {
                 textContent.text = "";
 
-                string dialogue = dialogueOpening.dialogueContents[j];
+                string dialogue = data.dialogueContents[j];
 
                 for (int i = 0; i < dialogue.Length; i++)
                 {
@@ -87,6 +105,10 @@ namespace Blythe
                 }
 
                 print("玩家按下按鍵");
+                playerInput.enabled = true;
+
+                // ?. 當onDialogueFinish沒有值就不執行
+                onDialogueFinish?.Invoke();
 
             }
 
