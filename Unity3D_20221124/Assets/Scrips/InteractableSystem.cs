@@ -1,33 +1,38 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.Events;
 
 namespace Blythe
 {
 
     /// <summary>
-    /// ¤¬°Ê¨t²Î¡A°»´úª±®a¬O§_¶i¤J¨Ã¥B°õ¦æ¤¬°Ê¦æ¬°
+    /// äº’å‹•ç³»çµ±ï¼Œåµæ¸¬ç©å®¶æ˜¯å¦é€²å…¥ä¸¦ä¸”åŸ·è¡Œäº’å‹•è¡Œç‚º
     /// </summary>
     public class InteractableSystem : MonoBehaviour
     {
-        [SerializeField,Header("¹ï¸Ü¸ê®Æ")]
+        [SerializeField,Header("å°è©±è³‡æ–™")]
         private DialogueData dataDialogue;
-        [SerializeField,Header("¹ï¸Üµ²§ô«áªº¨Æ¥ó")]
+        [SerializeField,Header("å°è©±çµæŸå¾Œçš„äº‹ä»¶")]
         private UnityEvent onDialogueFinish;
 
-        [SerializeField,Header("±Ò°Ê¹D¨ã")]
+        [SerializeField,Header("å•Ÿå‹•é“å…·")]
         private GameObject propActive;
 
-        [SerializeField,Header("±Ò°Ê«áªº¹ï¸Ü¸ê®Æ")]
+        [SerializeField,Header("å•Ÿå‹•å¾Œçš„å°è©±è³‡æ–™")]
         private DialogueData dataDialogueAvtive;
+
+        [SerializeField, Header("å•Ÿå‹•å¾Œå°è©±çµæŸå¾Œçš„äº‹ä»¶")]
+        private UnityEvent onDialogueFinishActive;
+
+
         private string nameTarget = "PlayerCapsule";
         private DialogueSystem dialogueSystem;
-        // 3D ª«¥ó¾A¥Î
-        // ¨â­Ó¸I¼²ª«¥ó¥²¶·¨ä¤¤¤@­Ó¤Ä¿ï Is Tigger
-        //¸I¼²¶}©l
+        // 3D ç‰©ä»¶é©ç”¨
+        // å…©å€‹ç¢°æ’ç‰©ä»¶å¿…é ˆå…¶ä¸­ä¸€å€‹å‹¾é¸ Is Tigger
+        //ç¢°æ’é–‹å§‹
 
         private void Awake()
         {
-            dialogueSystem=GameObject.Find("µe¥¬¹ï¸Ü¨t²Î").GetComponent<DialogueSystem>();
+            dialogueSystem=GameObject.Find("ç•«å¸ƒå°è©±ç³»çµ±").GetComponent<DialogueSystem>();
         }
         private void OnTriggerEnter(Collider other)
         {
@@ -35,34 +40,34 @@ namespace Blythe
             {
                 print(other.name);
 
-                //¦pªG ¤£»İ­n±Ò°Ê¹D¨ã ©ÎªÌ ±Ò°Ê¹D¨ã¬OÅã¥Üªº´N°õ¦æ²Ä¤@¬q¹ï¸Ü
+                //å¦‚æœ ä¸éœ€è¦å•Ÿå‹•é“å…· æˆ–è€… å•Ÿå‹•é“å…·æ˜¯é¡¯ç¤ºçš„å°±åŸ·è¡Œç¬¬ä¸€æ®µå°è©±
                 if (propActive == null || propActive.activeInHierarchy)
                 {
                     dialogueSystem.StartDialogue(dataDialogue, onDialogueFinish);
                 }
                 else
                 {
-                    dialogueSystem.StartDialogue(dataDialogueAvtive);
+                    dialogueSystem.StartDialogue(dataDialogueAvtive, onDialogueFinishActive);
                 }
                 
             }
            
         }
 
-        //¸I¼²µ²§ô
+        //ç¢°æ’çµæŸ
         private void OnTriggerExit(Collider other)
         {
             
         }
 
-        //¸I¼²«ùÄò
+        //ç¢°æ’æŒçºŒ
         private void OnTriggerStay(Collider other)
         {
             
         }
 
         /// <summary>
-        /// ÁôÂÃª«¥ó
+        /// éš±è—ç‰©ä»¶
         /// </summary>
         public void HiddenObject()
         {
